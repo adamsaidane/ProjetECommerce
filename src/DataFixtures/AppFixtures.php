@@ -100,7 +100,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 1,
                 'category' => 0,
-                'image'=>'1.png'
+                'image'=>'1.jpg'
             ],
             [
                 'title' => 'Le Rouge et le Noir',
@@ -114,7 +114,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 2,
                 'category' => 0,
-                'image'=>'2.png'
+                'image'=>'2.jpg'
             ],
             [
                 'title' => 'Madame Bovary',
@@ -128,7 +128,7 @@ class AppFixtures extends Fixture
                 'condition' => 'neuf',
                 'stock' => 1,
                 'category' => 0,
-                'image'=>'3.png'
+                'image'=>'3.jpg'
             ],
             [
                 'title' => 'Notre-Dame de Paris',
@@ -142,7 +142,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 2,
                 'category' => 0,
-                'image'=>'4.png'
+                'image'=>'4.jpg'
             ],
             [
                 'title' => 'Le Père Goriot',
@@ -156,7 +156,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 4,
                 'category' => 0,
-                'image'=>'5.png'
+                'image'=>'5.jpg'
             ],
 
             // Livres d'art
@@ -172,7 +172,7 @@ class AppFixtures extends Fixture
                 'condition' => 'neuf',
                 'stock' => 3,
                 'category' => 1,
-                'image'=>'6.png'
+                'image'=>'6.jpg'
             ],
             [
                 'title' => 'Les Impressionnistes',
@@ -186,7 +186,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 2,
                 'category' => 1,
-                'image'=>'7.png'
+                'image'=>'7.jpg'
             ],
 
             // Histoire
@@ -202,7 +202,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 1,
                 'category' => 2,
-                'image'=>'8.png'
+                'image'=>'8.jpg'
             ],
             [
                 'title' => 'Mémoires de Guerre',
@@ -216,7 +216,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 6,
                 'category' => 2,
-                'image'=>'9.png'
+                'image'=>'9.jpg'
             ],
 
             // Sciences
@@ -232,7 +232,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 2,
                 'category' => 3,
-                'image'=>'10.png'
+                'image'=>'10.jpg'
             ],
             [
                 'title' => 'L\'Origine des espèces',
@@ -246,7 +246,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 3,
                 'category' => 3,
-                'image'=>'11.png'
+                'image'=>'11.jpg'
             ],
 
             // Philosophie
@@ -262,7 +262,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 1,
                 'category' => 4,
-                'image'=>'12.png'
+                'image'=>'12.jpg'
             ],
             [
                 'title' => 'Être et Temps',
@@ -276,7 +276,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 3,
                 'category' => 4,
-                'image'=>'13.png'
+                'image'=>'13.jpg'
             ],
 
             // Poésie
@@ -292,7 +292,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 1,
                 'category' => 5,
-                'image'=>'14.png'
+                'image'=>'14.jpg'
             ],
             [
                 'title' => 'Alcools',
@@ -306,7 +306,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 2,
                 'category' => 5,
-                'image'=>'15.png'
+                'image'=>'15.jpg'
             ],
 
             // Théâtre
@@ -322,7 +322,7 @@ class AppFixtures extends Fixture
                 'condition' => 'bon',
                 'stock' => 1,
                 'category' => 6,
-                'image'=>'16.png'
+                'image'=>'16.jpg'
             ],
 
             // Biographies
@@ -338,7 +338,7 @@ class AppFixtures extends Fixture
                 'condition' => 'tres_bon',
                 'stock' => 4,
                 'category' => 7,
-                'image'=>'17.png'
+                'image'=>'17.jpg'
             ],
         ];
 
