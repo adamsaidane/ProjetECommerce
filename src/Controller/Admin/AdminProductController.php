@@ -115,7 +115,11 @@ class AdminProductController extends AbstractController
     #[Route('/{id}/delete', name: 'app_admin_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $product->getId(), $request->request->get('_token'))) {
+            $reviews = $product->getReviews();
+            foreach ($reviews as $review) {
+                $entityManager->remove($review);
+            }
             $entityManager->remove($product);
             $entityManager->flush();
             $this->addFlash('success', 'Produit supprimé avec succès !');
