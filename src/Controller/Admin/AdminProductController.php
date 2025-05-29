@@ -65,23 +65,6 @@ class AdminProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = null;
 
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
-                }
-
-                $product->setImage($newFilename);
-            }
-
             $entityManager->persist($product);
             $entityManager->flush();
 
@@ -116,32 +99,6 @@ class AdminProductController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = null;
 
-            if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                try {
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),
-                        $newFilename
-                    );
-
-                    // Supprimer l'ancienne image si elle existe
-                    $oldImage = $product->getImage();
-                    if ($oldImage) {
-                        $oldImagePath = $this->getParameter('images_directory').'/'.$oldImage;
-                        if (file_exists($oldImagePath)) {
-                            unlink($oldImagePath);
-                        }
-                    }
-
-                    $product->setImage($newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'image.');
-                }
-            }
-
             $product->setUpdatedAt(new \DateTimeImmutable());
             $entityManager->flush();
 
@@ -159,15 +116,6 @@ class AdminProductController extends AbstractController
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-            // Supprimer l'image si elle existe
-            $image = $product->getImage();
-            if ($image) {
-                $imagePath = $this->getParameter('images_directory').'/'.$image;
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
-
             $entityManager->remove($product);
             $entityManager->flush();
             $this->addFlash('success', 'Produit supprimé avec succès !');
