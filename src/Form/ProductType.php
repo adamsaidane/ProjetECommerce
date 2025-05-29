@@ -16,6 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\Positive;
 
 class ProductType extends AbstractType
 {
@@ -24,19 +28,48 @@ class ProductType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'Titre',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer un titre']),
+                    new Length([
+                        'min' => 3,
+                        'max' => 255,
+                        'minMessage' => 'Le titre doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le titre ne peut pas dépasser {{ limit }} caractères'
+                    ])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer une description']),
+                    new Length([
+                        'min' => 10,
+                        'minMessage' => 'La description doit contenir au moins {{ limit }} caractères'
+                    ])
+                ],
                 'attr' => ['class' => 'form-control', 'rows' => 5]
             ])
             ->add('price', MoneyType::class, [
                 'label' => 'Prix',
                 'currency' => 'EUR',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer un prix']),
+                    new Positive(['message' => 'Le prix doit être positif'])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('author', TextType::class, [
                 'label' => 'Auteur',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer un auteur']),
+                    new Length([
+                        'min' => 2,
+                        'max' => 100,
+                        'minMessage' => 'Le nom de l\'auteur doit contenir au moins {{ limit }} caractères',
+                        'maxMessage' => 'Le nom de l\'auteur ne peut pas dépasser {{ limit }} caractères'
+                    ])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('isbn', TextType::class, [
@@ -47,6 +80,12 @@ class ProductType extends AbstractType
             ->add('publicationYear', IntegerType::class, [
                 'label' => 'Année de publication',
                 'required' => false,
+                'constraints' => [
+                    new GreaterThanOrEqual([
+                        'value' => 1000,
+                        'message' => 'L\'année de publication doit être supérieure à {{ compared_value }}'
+                    ])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('publisher', TextType::class, [
@@ -57,6 +96,9 @@ class ProductType extends AbstractType
             ->add('pages', IntegerType::class, [
                 'label' => 'Nombre de pages',
                 'required' => false,
+                'constraints' => [
+                    new Positive(['message' => 'Le nombre de pages doit être positif'])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('bookcondition', ChoiceType::class, [
@@ -68,10 +110,20 @@ class ProductType extends AbstractType
                     'État correct' => 'correct',
                     'Mauvais état' => 'mauvais'
                 ],
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez sélectionner un état'])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('stock', IntegerType::class, [
                 'label' => 'Stock',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez entrer une quantité en stock']),
+                    new GreaterThanOrEqual([
+                        'value' => 0,
+                        'message' => 'Le stock ne peut pas être négatif'
+                    ])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('isActive', CheckboxType::class, [
@@ -83,6 +135,9 @@ class ProductType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'label' => 'Catégorie',
+                'constraints' => [
+                    new NotBlank(['message' => 'Veuillez sélectionner une catégorie'])
+                ],
                 'attr' => ['class' => 'form-control']
             ])
             ->add('imageFile', FileType::class, [
@@ -91,7 +146,7 @@ class ProductType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize' => '2M',
+                        'maxSize' => '5M',
                         'mimeTypes' => [
                             'image/jpeg',
                             'image/png',

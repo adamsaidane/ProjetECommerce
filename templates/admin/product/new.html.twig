@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau produit - Administration{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                {% include 'admin/_sidebar.html.twig' with {'active': 'products'} %}
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Nouveau produit</h1>
+                    <a href="{{ path('app_admin_product_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        {{ form_row(form.title) }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form_row(form.author) }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form_row(form.category) }}
+                                    </div>
+                                </div>
+                                {{ form_row(form.description) }}
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{ form_row(form.price) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.stock) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.bookcondition) }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {{ form_row(form.isbn) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.publicationYear) }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ form_row(form.pages) }}
+                                    </div>
+                                </div>
+
+                                {{ form_row(form.publisher) }}
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h5>Image du produit</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        {{ form_row(form.imageFile) }}
+                                        <div class="text-center mt-3">
+                                            <div class="image-preview bg-light rounded d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                <i class="fas fa-image fa-3x text-muted"></i>
+                                            </div>
+                                            <small class="text-muted">L'aperçu de l'image apparaîtra ici</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Publication</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-check mb-3">
+                                            {{ form_widget(form.isActive) }}
+                                            {{ form_label(form.isActive) }}
+                                        </div>
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> Les produits actifs sont visibles sur le site.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <a href="{{ path('app_admin_product_index') }}" class="btn btn-secondary me-2">Annuler</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Créer le produit
+                            </button>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Prévisualisation de l'image
+            const imageInput = document.querySelector('input[type="file"]');
+            const imagePreview = document.querySelector('.image-preview');
+
+            if (imageInput && imagePreview) {
+                imageInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML = `<img src="${e.target.result}" class="img-fluid" style="max-height: 200px;">`;
+                        }
+
+                        reader.readAsDataURL(this.files[0]);
+                    } else {
+                        imagePreview.innerHTML = '<i class="fas fa-image fa-3x text-muted"></i>';
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}
