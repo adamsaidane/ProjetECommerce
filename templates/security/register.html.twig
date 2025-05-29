@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Livres Rares{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header text-center">
+                        <h3><i class="fas fa-user-plus"></i> Inscription</h3>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(registrationForm) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.firstName) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.lastName) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(registrationForm.email) }}
+                        {{ form_row(registrationForm.plainPassword.first) }}
+                        {{ form_row(registrationForm.plainPassword.second) }}
+
+                        <div class="mb-3 form-check">
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            {{ form_label(registrationForm.agreeTerms) }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">S'inscrire</button>
+                        </div>
+                        {{ form_end(registrationForm) }}
+
+                        <hr>
+                        <div class="text-center">
+                            <p>Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
