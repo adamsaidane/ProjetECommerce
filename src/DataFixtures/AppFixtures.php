@@ -99,7 +99,8 @@ class AppFixtures extends Fixture
                 'pages' => 1900,
                 'condition' => 'tres_bon',
                 'stock' => 1,
-                'category' => 0
+                'category' => 0,
+                'image'=>'1.png'
             ],
             [
                 'title' => 'Le Rouge et le Noir',
@@ -112,7 +113,8 @@ class AppFixtures extends Fixture
                 'pages' => 512,
                 'condition' => 'tres_bon',
                 'stock' => 2,
-                'category' => 0
+                'category' => 0,
+                'image'=>'2.png'
             ],
             [
                 'title' => 'Madame Bovary',
@@ -125,7 +127,8 @@ class AppFixtures extends Fixture
                 'pages' => 464,
                 'condition' => 'neuf',
                 'stock' => 1,
-                'category' => 0
+                'category' => 0,
+                'image'=>'3.png'
             ],
             [
                 'title' => 'Notre-Dame de Paris',
@@ -138,7 +141,8 @@ class AppFixtures extends Fixture
                 'pages' => 634,
                 'condition' => 'bon',
                 'stock' => 2,
-                'category' => 0
+                'category' => 0,
+                'image'=>'4.png'
             ],
             [
                 'title' => 'Le Père Goriot',
@@ -150,8 +154,9 @@ class AppFixtures extends Fixture
                 'publisher' => 'Werdet',
                 'pages' => 374,
                 'condition' => 'tres_bon',
-                'stock' => 3,
-                'category' => 0
+                'stock' => 4,
+                'category' => 0,
+                'image'=>'5.png'
             ],
 
             // Livres d'art
@@ -166,7 +171,8 @@ class AppFixtures extends Fixture
                 'pages' => 450,
                 'condition' => 'neuf',
                 'stock' => 3,
-                'category' => 1
+                'category' => 1,
+                'image'=>'6.png'
             ],
             [
                 'title' => 'Les Impressionnistes',
@@ -179,7 +185,8 @@ class AppFixtures extends Fixture
                 'pages' => 520,
                 'condition' => 'tres_bon',
                 'stock' => 2,
-                'category' => 1
+                'category' => 1,
+                'image'=>'7.png'
             ],
 
             // Histoire
@@ -194,7 +201,8 @@ class AppFixtures extends Fixture
                 'pages' => 8500,
                 'condition' => 'bon',
                 'stock' => 1,
-                'category' => 2
+                'category' => 2,
+                'image'=>'8.png'
             ],
             [
                 'title' => 'Mémoires de Guerre',
@@ -206,8 +214,9 @@ class AppFixtures extends Fixture
                 'publisher' => 'Plon',
                 'pages' => 1200,
                 'condition' => 'tres_bon',
-                'stock' => 2,
-                'category' => 2
+                'stock' => 6,
+                'category' => 2,
+                'image'=>'9.png'
             ],
 
             // Sciences
@@ -222,7 +231,8 @@ class AppFixtures extends Fixture
                 'pages' => 512,
                 'condition' => 'tres_bon',
                 'stock' => 2,
-                'category' => 3
+                'category' => 3,
+                'image'=>'10.png'
             ],
             [
                 'title' => 'L\'Origine des espèces',
@@ -234,8 +244,9 @@ class AppFixtures extends Fixture
                 'publisher' => 'Guillaumin',
                 'pages' => 480,
                 'condition' => 'bon',
-                'stock' => 1,
-                'category' => 3
+                'stock' => 3,
+                'category' => 3,
+                'image'=>'11.png'
             ],
 
             // Philosophie
@@ -250,7 +261,8 @@ class AppFixtures extends Fixture
                 'pages' => 856,
                 'condition' => 'bon',
                 'stock' => 1,
-                'category' => 4
+                'category' => 4,
+                'image'=>'12.png'
             ],
             [
                 'title' => 'Être et Temps',
@@ -263,7 +275,8 @@ class AppFixtures extends Fixture
                 'pages' => 589,
                 'condition' => 'tres_bon',
                 'stock' => 3,
-                'category' => 4
+                'category' => 4,
+                'image'=>'13.png'
             ],
 
             // Poésie
@@ -278,7 +291,8 @@ class AppFixtures extends Fixture
                 'pages' => 248,
                 'condition' => 'bon',
                 'stock' => 1,
-                'category' => 5
+                'category' => 5,
+                'image'=>'14.png'
             ],
             [
                 'title' => 'Alcools',
@@ -291,7 +305,8 @@ class AppFixtures extends Fixture
                 'pages' => 156,
                 'condition' => 'tres_bon',
                 'stock' => 2,
-                'category' => 5
+                'category' => 5,
+                'image'=>'15.png'
             ],
 
             // Théâtre
@@ -306,7 +321,8 @@ class AppFixtures extends Fixture
                 'pages' => 124,
                 'condition' => 'bon',
                 'stock' => 1,
-                'category' => 6
+                'category' => 6,
+                'image'=>'16.png'
             ],
 
             // Biographies
@@ -320,8 +336,9 @@ class AppFixtures extends Fixture
                 'publisher' => 'Penaud',
                 'pages' => 2400,
                 'condition' => 'tres_bon',
-                'stock' => 1,
-                'category' => 7
+                'stock' => 4,
+                'category' => 7,
+                'image'=>'17.png'
             ],
         ];
 
@@ -339,6 +356,7 @@ class AppFixtures extends Fixture
             $product->setBookCondition($productData['condition']);
             $product->setStock($productData['stock']);
             $product->setCategory($categoryEntities[$productData['category']]);
+            $product->setImage($productData['image']);
             $product->setIsActive(true);
             $manager->persist($product);
             $productEntities[] = $product;
