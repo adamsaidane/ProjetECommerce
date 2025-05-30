@@ -76,8 +76,8 @@
             </ul>
 
             <!-- Search Form -->
-            <form class="d-flex me-3" method="GET" action="{{ path('app_product_search') }}">
-                <input class="form-control me-2" type="search" name="q" placeholder="Rechercher un livre..." value="{{ app.request.query.get('q') }}">
+            <form class="d-flex me-3" method="GET" action="{{ path('app_products') }}">
+                <input class="form-control me-2" type="search" name="search" placeholder="Rechercher un livre..." value="{{ app.request.query.get('q') }}">
                 <button class="btn btn-outline-primary" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
