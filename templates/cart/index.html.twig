@@ -67,8 +67,8 @@
                                             <small class="text-muted">Stock: {{ item.product.stock }}</small>
                                         </div>
                                         <div class="col-md-2 text-center">
-                                            <div class="fw-bold item-price">{{ item.subTotal }}€</div>
-                                            <small class="text-muted">{{ item.product.price }}€ / unité</small>
+                                            <div class="fw-bold item-price">{{ item.subTotal }}dt</div>
+                                            <small class="text-muted">{{ item.product.price }}dt / unité</small>
                                         </div>
                                         <div class="col-md-2 text-center">
                                             <button class="btn btn-outline-danger btn-sm remove-item"
@@ -102,7 +102,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Sous-total ({{ cart.totalItems }} article{{ cart.totalItems > 1 ? 's' : '' }}):</span>
-                                <span class="cart-subtotal">{{ cart.totalPrice }}€</span>
+                                <span class="cart-subtotal">{{ cart.totalPrice }}dt</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Frais de livraison:</span>
@@ -110,7 +110,7 @@
                                     {% if cart.totalPrice >= 50 %}
                                         <span class="text-success">Gratuit</span>
                                     {% else %}
-                                        5.90€
+                                        5.90dt
                                     {% endif %}
                                 </span>
                             </div>
@@ -119,9 +119,9 @@
                                 <strong>Total:</strong>
                                 <strong class="cart-total">
                                     {% if cart.totalPrice >= 50 %}
-                                        {{ cart.totalPrice }}€
+                                        {{ cart.totalPrice }}dt
                                     {% else %}
-                                        {{ cart.totalPrice + 5.90 }}€
+                                        {{ cart.totalPrice + 5.90 }}dt
                                     {% endif %}
                                 </strong>
                             </div>
@@ -129,7 +129,7 @@
                             {% if cart.totalPrice < 50 %}
                                 <div class="alert alert-info">
                                     <i class="fas fa-truck"></i>
-                                    Ajoutez {{ 50 - cart.totalPrice }}€ pour bénéficier de la livraison gratuite !
+                                    Ajoutez {{ 50 - cart.totalPrice }}dt pour bénéficier de la livraison gratuite !
                                 </div>
                             {% else %}
                                 <div class="alert alert-success">
@@ -225,9 +225,9 @@
                             updateCartDisplay(data);
 
                             // Mettre à jour le prix de l'item
-                            const unitPrice = parseFloat(cartItem.querySelector('.text-muted').textContent.replace('€ / unité', ''));
+                            const unitPrice = parseFloat(cartItem.querySelector('.text-muted').textContent.replace('dt / unité', ''));
                             const newSubTotal = (unitPrice * quantity).toFixed(2);
-                            cartItem.querySelector('.item-price').textContent = newSubTotal + '€';
+                            cartItem.querySelector('.item-price').textContent = newSubTotal + 'dt';
                             cartItem.querySelector('.quantity-input').value = quantity;
                         }
                     })
@@ -263,12 +263,12 @@
 
             function updateCartDisplay(data) {
                 // Mettre à jour le total du panier
-                document.querySelector('.cart-subtotal').textContent = data.cartTotal + '€';
+                document.querySelector('.cart-subtotal').textContent = data.cartTotal + 'dt';
 
                 // Mettre à jour le total final
                 const shipping = data.cartTotal >= 50 ? 0 : 5.90;
                 const finalTotal = (parseFloat(data.cartTotal) + shipping).toFixed(2);
-                document.querySelector('.cart-total').textContent = finalTotal + '€';
+                document.querySelector('.cart-total').textContent = finalTotal + 'dt';
 
                 // Mettre à jour le compteur dans la navbar
                 const cartBadge = document.querySelector('.navbar .badge');

@@ -60,8 +60,8 @@
                                     <strong>{{ item.quantity }}</strong>
                                 </div>
                                 <div class="col-md-2 text-end">
-                                    <div class="fw-bold">{{ item.subTotal }}€</div>
-                                    <small class="text-muted">{{ item.price }}€ / unité</small>
+                                    <div class="fw-bold">{{ item.subTotal }}dt</div>
+                                    <small class="text-muted">{{ item.price }}dt / unité</small>
                                 </div>
                             </div>
                         {% endfor %}
@@ -102,18 +102,18 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Sous-total:</span>
-                            <span>{{ order.subTotal }}€</span>
+                            <span>{{ order.subTotal }}dt</span>
                         </div>
                         {% if order.shippingCost > 0 %}
                             <div class="d-flex justify-content-between mb-2">
                                 <span>Frais de livraison:</span>
-                                <span>{{ order.shippingCost }}€</span>
+                                <span>{{ order.shippingCost }}dt</span>
                             </div>
                         {% endif %}
                         <hr>
                         <div class="d-flex justify-content-between mb-3">
                             <strong>Total:</strong>
-                            <strong class="text-primary">{{ order.totalAmount }}€</strong>
+                            <strong class="text-primary">{{ order.totalAmount }}dt</strong>
                         </div>
                     </div>
                 </div>

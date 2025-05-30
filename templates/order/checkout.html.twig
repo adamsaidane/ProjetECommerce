@@ -143,7 +143,7 @@
                                     <small class="text-muted">Quantité: {{ item.quantity }}</small>
                                 </div>
                                 <div class="text-end">
-                                    <strong>{{ item.subTotal }}€</strong>
+                                    <strong>{{ item.subTotal }}dt</strong>
                                 </div>
                             </div>
                             {% if not loop.last %}<hr class="my-2">{% endif %}
@@ -153,7 +153,7 @@
 
                         <div class="d-flex justify-content-between mb-2">
                             <span>Sous-total:</span>
-                            <span>{{ cart.totalPrice }}€</span>
+                            <span>{{ cart.totalPrice }}dt</span>
                         </div>
 
                         <div class="d-flex justify-content-between mb-2">
@@ -162,7 +162,7 @@
                                 {% if cart.totalPrice >= 50 %}
                                     <span class="text-success">Gratuit</span>
                                 {% else %}
-                                    5,90€
+                                    5,90dt
                                 {% endif %}
                             </span>
                         </div>
@@ -173,9 +173,9 @@
                             <strong>Total:</strong>
                             <strong class="text-primary">
                                 {% if cart.totalPrice >= 50 %}
-                                    {{ cart.totalPrice }}€
+                                    {{ cart.totalPrice }}dt
                                 {% else %}
-                                    {{ cart.totalPrice + 5.90 }}€
+                                    {{ cart.totalPrice + 5.90 }}dt
                                 {% endif %}
                             </strong>
                         </div>

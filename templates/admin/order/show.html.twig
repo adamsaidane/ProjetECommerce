@@ -73,15 +73,15 @@
                                             </tr>
                                             <tr>
                                                 <td><strong>Sous-total:</strong></td>
-                                                <td>{{ order.subTotal|number_format(2, ',', ' ') }}€</td>
+                                                <td>{{ order.subTotal|number_format(2, ',', ' ') }}dt</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Frais de port:</strong></td>
-                                                <td>{{ order.shippingCost ? order.shippingCost|number_format(2, ',', ' ') ~ '€' : 'Gratuit' }}</td>
+                                                <td>{{ order.shippingCost ? order.shippingCost|number_format(2, ',', ' ') ~ 'dt' : 'Gratuit' }}</td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Total:</strong></td>
-                                                <td><strong>{{ order.totalAmount|number_format(2, ',', ' ') }}€</strong></td>
+                                                <td><strong>{{ order.totalAmount|number_format(2, ',', ' ') }}dt</strong></td>
                                             </tr>
                                         </table>
                                     </div>
@@ -126,9 +126,9 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>{{ item.price|number_format(2, ',', ' ') }}€</td>
+                                                <td>{{ item.price|number_format(2, ',', ' ') }}dt</td>
                                                 <td>{{ item.quantity }}</td>
-                                                <td><strong>{{ item.subTotal|number_format(2, ',', ' ') }}€</strong></td>
+                                                <td><strong>{{ item.subTotal|number_format(2, ',', ' ') }}dt</strong></td>
                                             </tr>
                                         {% endfor %}
                                         </tbody>

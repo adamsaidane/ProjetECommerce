@@ -41,7 +41,7 @@
                                     <p class="card-text flex-grow-1">{{ product.description|length > 100 ? product.description|slice(0, 100) ~ '...' : product.description }}</p>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="price">{{ product.price }}€</span>
+                                            <span class="price">{{ product.price }}dt</span>
                                             {% if product.reviews|length > 0 %}
                                                 <div class="star-rating">
                                                     {% for i in 1..5 %}

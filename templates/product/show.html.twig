@@ -7,7 +7,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
-                <li class="breadcrumb-item"><a href="{{ path('app_product_category', {slug: product.category.slug}) }}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_products', {category: product.category.slug}) }}">{{ product.category.name }}</a></li>
                 <li class="breadcrumb-item active">{{ product.title }}</li>
             </ol>
         </nav>
@@ -39,7 +39,7 @@
                 {% endif %}
 
                 <div class="price mb-4">
-                    <span class="h2 text-success">{{ product.price }}€</span>
+                    <span class="h2 text-success">{{ product.price }}dt</span>
                 </div>
 
                 <div class="mb-4">
@@ -116,7 +116,7 @@
                 {% endif %}
 
                 <div class="alert alert-info">
-                    <i class="fas fa-truck"></i> Livraison gratuite à partir de 50€
+                    <i class="fas fa-truck"></i> Livraison gratuite à partir de 50dt
                 </div>
             </div>
         </div>
@@ -212,7 +212,7 @@
                                         <p class="text-muted mb-2">par {{ relatedProduct.author }}</p>
                                         <div class="mt-auto">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <span class="price">{{ relatedProduct.price }}€</span>
+                                                <span class="price">{{ relatedProduct.price }}dt</span>
                                                 {% if relatedProduct.reviews|length > 0 %}
                                                     <div class="star-rating">
                                                         {% for i in 1..5 %}

@@ -104,7 +104,7 @@
                                                 <tr>
                                                     <td><code>{{ order.orderNumber }}</code></td>
                                                     <td>{{ order.user.fullName }}</td>
-                                                    <td>{{ order.totalAmount|number_format(2, ',', ' ') }}€</td>
+                                                    <td>{{ order.totalAmount|number_format(2, ',', ' ') }}dt</td>
                                                     <td>
                                                         <span class="badge bg-{{ order.statusBadgeClass }}">
                                                             {{ order.statusLabel }}
