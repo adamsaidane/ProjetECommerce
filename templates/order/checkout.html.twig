@@ -93,12 +93,15 @@
                         <h5><i class="fas fa-credit-card"></i> Méthode de paiement</h5>
                     </div>
                     <div class="card-body">
-                        {{ form_row(form.payment_method) }}
-
-                        <div class="alert alert-info mt-3">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>Paiement sécurisé</strong><br>
-                            Vos informations de paiement sont protégées par un cryptage SSL.
+                        <div class="form-group">
+                            <div>
+                                {% for choice in form.payment_method %}
+                                    <div class="form-check form-check-inline">
+                                        {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                                        {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -108,15 +109,15 @@ class CheckoutType extends AbstractType
 
             // Méthode de paiement
             ->add('payment_method', ChoiceType::class, [
-                'label' => 'Méthode de paiement',
                 'choices' => [
                     'Carte bancaire' => 'card',
-                    'PayPal' => 'paypal',
-                    'Virement bancaire' => 'transfer',
+                    'EDinar' => 'edinar',
+                    'Sur Place' => 'transfer',
                 ],
                 'expanded' => true,
-                'data' => 'card',
-                'attr' => ['class' => 'form-check-input']
+                'multiple' => false,
+                'attr' => ['class' => 'form-check-input'],
+                'row_attr' => ['class' => 'd-flex gap-4'],
             ])
 
             // Notes de commande
