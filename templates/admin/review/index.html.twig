@@ -1,0 +1,344 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des avis - Administration{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                {% include 'admin/_sidebar.html.twig' with {'active': 'reviews'} %}
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Gestion des avis clients</h1>
+                    <a href="{{ path('app_admin_review_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouvel avis
+                    </a>
+                </div>
+
+                <!-- Flash messages -->
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>{{ stats.total }}</h4>
+                                        <p>Total des avis</p>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-star fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>{{ stats.average }}</h4>
+                                        <p>Note moyenne</p>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-chart-line fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>{{ stats.fiveStars }}</h4>
+                                        <p>Avis 5 étoiles</p>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-star fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h4>{{ stats.oneStar }}</h4>
+                                        <p>Avis 1 étoile</p>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search and filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Rechercher un avis..." value="{{ currentSearch }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="product" class="form-select">
+                                    <option value="">Tous les produits</option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}" {% if currentProduct == product.id %}selected{% endif %}>
+                                            {{ product.title }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="rating" class="form-select">
+                                    <option value="">Toutes les notes</option>
+                                    <option value="5" {% if currentRating == '5' %}selected{% endif %}>5 étoiles</option>
+                                    <option value="4" {% if currentRating == '4' %}selected{% endif %}>4 étoiles</option>
+                                    <option value="3" {% if currentRating == '3' %}selected{% endif %}>3 étoiles</option>
+                                    <option value="2" {% if currentRating == '2' %}selected{% endif %}>2 étoiles</option>
+                                    <option value="1" {% if currentRating == '1' %}selected{% endif %}>1 étoile</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="sort" class="form-select">
+                                    <option value="createdAt" {% if currentSort == 'createdAt' %}selected{% endif %}>Date</option>
+                                    <option value="rating" {% if currentSort == 'rating' %}selected{% endif %}>Note</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1">
+                                <select name="dir" class="form-select">
+                                    <option value="DESC" {% if currentDir == 'DESC' %}selected{% endif %}>↓</option>
+                                    <option value="ASC" {% if currentDir == 'ASC' %}selected{% endif %}>↑</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Reviews table -->
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Liste des avis ({{ totalReviews }})</h5>
+                        <form method="post" action="{{ path('app_admin_review_bulk_action') }}" id="bulk-form">
+                            <div class="input-group">
+                                <select name="bulk_action" class="form-select form-select-sm" required>
+                                    <option value="">Action groupée</option>
+                                    <option value="delete">Supprimer</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" id="bulk-submit">
+                                    Appliquer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th width="40">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="select-all">
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Produit</th>
+                                    <th>Utilisateur</th>
+                                    <th>Note</th>
+                                    <th>Commentaire</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for review in reviews %}
+                                    <tr>
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input review-checkbox" type="checkbox" name="reviews[]" value="{{ review.id }}" form="bulk-form">
+                                            </div>
+                                        </td>
+                                        <td>{{ review.id }}</td>
+                                        <td>
+                                            <a href="{{ path('app_admin_product_show', {'id': review.product.id}) }}">
+                                                {{ review.product.title }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_admin_user_show', {'id': review.user.id}) }}">
+                                                {{ review.user.fullName }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% for i in 1..5 %}
+                                                {% if i <= review.rating %}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="far fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% if review.comment %}
+                                                {{ review.comment|length > 50 ? review.comment|slice(0, 50) ~ '...' : review.comment }}
+                                            {% else %}
+                                                <span class="text-muted">Aucun commentaire</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ review.createdAt|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ path('app_admin_review_show', {'id': review.id}) }}" class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ path('app_admin_review_edit', {'id': review.id}) }}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ review.id }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deleteModal{{ review.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Confirmation de suppression</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                                                            <div class="mb-3">
+                                                                <strong>Produit :</strong> {{ review.product.title }}
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <strong>Utilisateur :</strong> {{ review.user.fullName }}
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <strong>Note :</strong>
+                                                                {% for i in 1..5 %}
+                                                                    {% if i <= review.rating %}
+                                                                        <i class="fas fa-star text-warning"></i>
+                                                                    {% else %}
+                                                                        <i class="far fa-star text-muted"></i>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <form method="post" action="{{ path('app_admin_review_delete', {'id': review.id}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+                                                                <button type="submit" class="btn btn-danger">
+                                                                    Supprimer
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <p class="text-muted mb-0">Aucun avis trouvé.</p>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <!-- Pagination -->
+                        {% if totalPages > 1 %}
+                            <nav>
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('app_admin_review_index', {page: currentPage - 1, search: currentSearch, product: currentProduct, rating: currentRating, sort: currentSort, dir: currentDir}) }}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    {% for i in 1..totalPages %}
+                                        <li class="page-item {{ currentPage == i ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ path('app_admin_review_index', {page: i, search: currentSearch, product: currentProduct, rating: currentRating, sort: currentSort, dir: currentDir}) }}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('app_admin_review_index', {page: currentPage + 1, search: currentSearch, product: currentProduct, rating: currentRating, sort: currentSort, dir: currentDir}) }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all checkbox functionality
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.review-checkbox');
+
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+
+            // Confirm bulk actions
+            const bulkForm = document.getElementById('bulk-form');
+            const bulkSubmit = document.getElementById('bulk-submit');
+
+            bulkForm.addEventListener('submit', function(e) {
+                const action = bulkForm.querySelector('select[name="bulk_action"]').value;
+                const checkedBoxes = document.querySelectorAll('.review-checkbox:checked');
+
+                if (checkedBoxes.length === 0) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner au moins un avis.');
+                    return;
+                }
+
+                if (action === 'delete') {
+                    if (!confirm('Êtes-vous sûr de vouloir supprimer les avis sélectionnés ? Cette action est irréversible.')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

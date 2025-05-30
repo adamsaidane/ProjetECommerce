@@ -1,0 +1,186 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'avis - Administration{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                {% include 'admin/_sidebar.html.twig' with {'active': 'reviews'} %}
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Détails de l'avis</h1>
+                    <div>
+                        <a href="{{ path('app_admin_review_index') }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+                        <a href="{{ path('app_admin_review_edit', {'id': review.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Flash messages -->
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informations de l'avis</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th width="200">ID</th>
+                                        <td>{{ review.id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Produit</th>
+                                        <td>
+                                            <a href="{{ path('app_admin_product_show', {'id': review.product.id}) }}">
+                                                {{ review.product.title }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Utilisateur</th>
+                                        <td>
+                                            <a href="{{ path('app_admin_user_show', {'id': review.user.id}) }}">
+                                                {{ review.user.fullName }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Note</th>
+                                        <td>
+                                            {% for i in 1..5 %}
+                                                {% if i <= review.rating %}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="far fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                            ({{ review.rating }}/5)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Commentaire</th>
+                                        <td>
+                                            {% if review.comment %}
+                                                <div class="p-3 bg-light rounded">
+                                                    {{ review.comment|nl2br }}
+                                                </div>
+                                            {% else %}
+                                                <span class="text-muted">Aucun commentaire</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date de création</th>
+                                        <td>{{ review.createdAt|date('d/m/Y H:i') }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ path('app_admin_review_edit', {'id': review.id}) }}" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Produit concerné</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    {% if review.product.image %}
+                                        <img src="{{ asset('uploads/products/' ~ review.product.image) }}" alt="{{ review.product.title }}" class="img-fluid rounded" style="max-height: 150px;">
+                                    {% else %}
+                                        <div class="bg-light rounded p-4 mb-3">
+                                            <i class="fas fa-book fa-4x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <h5>{{ review.product.title }}</h5>
+                                <p class="text-muted">{{ review.product.author }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">{{ review.product.price }}€</span>
+                                    <span class="badge {{ review.product.isInStock ? 'bg-success' : 'bg-danger' }}">
+                                        {{ review.product.isInStock ? 'En stock' : 'Rupture de stock' }}
+                                    </span>
+                                </div>
+                                <hr>
+                                <div class="d-grid">
+                                    <a href="{{ path('app_admin_product_show', {'id': review.product.id}) }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> Voir le produit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cet avis ?</p>
+                    <div class="mb-3">
+                        <strong>Produit :</strong> {{ review.product.title }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Utilisateur :</strong> {{ review.user.fullName }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Note :</strong>
+                        {% for i in 1..5 %}
+                            {% if i <= review.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-muted"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_admin_review_delete', {'id': review.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ review.id) }}">
+                        <button type="submit" class="btn btn-danger">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
