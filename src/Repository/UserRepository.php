@@ -32,4 +32,56 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+
+    /**
+     * Find users with pagination, search and filters
+     */
+    public function findPaginated(array $criteria, int $page, int $limit, ?string $search = null, string $sortBy = 'createdAt', string $sortDir = 'DESC'): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        // Apply search
+        if ($search) {
+            $qb->andWhere('u.firstName LIKE :search OR u.lastName LIKE :search OR u.email LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        // Apply role filter
+        if (isset($criteria['roles'])) {
+            $qb->andWhere('u.roles LIKE :role')
+                ->setParameter('role', '%' . $criteria['roles'] . '%');
+        }
+
+        // Apply sorting
+        $qb->orderBy('u.' . $sortBy, $sortDir);
+
+        // Apply pagination
+        $qb->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Count users with filters and search
+     */
+    public function countByCriteria(array $criteria, ?string $search = null): int
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)');
+
+        // Apply search
+        if ($search) {
+            $qb->andWhere('u.firstName LIKE :search OR u.lastName LIKE :search OR u.email LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        // Apply role filter
+        if (isset($criteria['roles'])) {
+            $qb->andWhere('u.roles LIKE :role')
+                ->setParameter('role', '%' . $criteria['roles'] . '%');
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }
