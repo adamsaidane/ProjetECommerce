@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la catégorie - Administration{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs"></i> Administration</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('app_admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                        <a href="{{ path('app_admin_product_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book"></i> Produits
+                        </a>
+                        <a href="{{ path('app_admin_user_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users"></i> Utilisateurs
+                        </a>
+                        <a href="{{ path('app_admin_category_index') }}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-tags"></i> Catégories
+                        </a>
+                        <a href="{{ path('app_admin_order_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-cart"></i> Commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Détails de la catégorie</h1>
+                    <div>
+                        <a href="{{ path('app_admin_category_index') }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+                        <a href="{{ path('app_admin_category_edit', {'id': category.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Flash messages -->
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informations de la catégorie</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th>ID</th>
+                                        <td>{{ category.id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <td>{{ category.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Slug</th>
+                                        <td><code>{{ category.slug }}</code></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Description</th>
+                                        <td>{{ category.description|nl2br }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date de création</th>
+                                        <td>{{ category.createdAt|date('d/m/Y H:i') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nombre de produits</th>
+                                        <td>{{ category.products|length }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ path('app_admin_category_edit', {'id': category.id}) }}" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </a>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Produits dans cette catégorie</h5>
+                                <span class="badge bg-primary">{{ category.products|length }}</span>
+                            </div>
+                            <div class="card-body p-0">
+                                {% if category.products|length > 0 %}
+                                    <div class="list-group list-group-flush">
+                                        {% for product in category.products %}
+                                            <a href="{{ path('app_admin_product_show', {'id': product.id}) }}" class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1">{{ product.title }}</h6>
+                                                    <small>{{ product.price }}€</small>
+                                                </div>
+                                                <p class="mb-1 text-muted">{{ product.author }}</p>
+                                                <small>Stock: {{ product.stock }} |
+                                                    {% if product.isActive %}
+                                                        <span class="text-success">Actif</span>
+                                                    {% else %}
+                                                        <span class="text-danger">Inactif</span>
+                                                    {% endif %}
+                                                </small>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="p-4 text-center">
+                                        <p class="text-muted mb-0">Aucun produit dans cette catégorie.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong>{{ category.name }}</strong> ?</p>
+                    {% if category.products|length > 0 %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Cette catégorie contient {{ category.products|length }} produit(s). La suppression sera impossible.
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_admin_category_delete', {'id': category.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                        <button type="submit" class="btn btn-danger" {% if category.products|length > 0 %}disabled{% endif %}>
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

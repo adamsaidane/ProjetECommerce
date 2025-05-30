@@ -1,0 +1,246 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des catégories - Administration{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs"></i> Administration</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('app_admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                        <a href="{{ path('app_admin_product_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book"></i> Produits
+                        </a>
+                        <a href="{{ path('app_admin_user_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users"></i> Utilisateurs
+                        </a>
+                        <a href="{{ path('app_admin_category_index') }}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-tags"></i> Catégories
+                        </a>
+                        <a href="{{ path('app_admin_order_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-cart"></i> Commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Gestion des catégories</h1>
+                    <a href="{{ path('app_admin_category_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nouvelle catégorie
+                    </a>
+                </div>
+
+                <!-- Flash messages -->
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+
+                <!-- Search and filters -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="get" class="row g-3">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Rechercher une catégorie..." value="{{ currentSearch }}">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="sort" class="form-select">
+                                    <option value="name" {% if currentSort == 'name' %}selected{% endif %}>Nom</option>
+                                    <option value="createdAt" {% if currentSort == 'createdAt' %}selected{% endif %}>Date de création</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="dir" class="form-select">
+                                    <option value="ASC" {% if currentDir == 'ASC' %}selected{% endif %}>Croissant</option>
+                                    <option value="DESC" {% if currentDir == 'DESC' %}selected{% endif %}>Décroissant</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Categories table -->
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Liste des catégories ({{ totalCategories }})</h5>
+                        <form method="post" action="{{ path('app_admin_category_bulk_action') }}" id="bulk-form">
+                            <div class="input-group">
+                                <select name="bulk_action" class="form-select form-select-sm" required>
+                                    <option value="">Action groupée</option>
+                                    <option value="delete">Supprimer</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" id="bulk-submit">
+                                    Appliquer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead>
+                                <tr>
+                                    <th width="40">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="select-all">
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Slug</th>
+                                    <th>Produits</th>
+                                    <th>Date de création</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for category in categories %}
+                                    <tr>
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input category-checkbox" type="checkbox" name="categories[]" value="{{ category.id }}" form="bulk-form">
+                                            </div>
+                                        </td>
+                                        <td>{{ category.id }}</td>
+                                        <td>{{ category.name }}</td>
+                                        <td><code>{{ category.slug }}</code></td>
+                                        <td>{{ category.products|length }}</td>
+                                        <td>{{ category.createdAt|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ path('app_admin_category_show', {'id': category.id}) }}" class="btn btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ path('app_admin_category_edit', {'id': category.id}) }}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ category.id }}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deleteModal{{ category.id }}" tabindex="-1" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Confirmation de suppression</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Êtes-vous sûr de vouloir supprimer la catégorie <strong>{{ category.name }}</strong> ?</p>
+                                                            {% if category.products|length > 0 %}
+                                                                <div class="alert alert-warning">
+                                                                    <i class="fas fa-exclamation-triangle"></i> Cette catégorie contient {{ category.products|length }} produit(s). La suppression sera impossible.
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                            <form method="post" action="{{ path('app_admin_category_delete', {'id': category.id}) }}">
+                                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+                                                                <button type="submit" class="btn btn-danger" {% if category.products|length > 0 %}disabled{% endif %}>
+                                                                    Supprimer
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <p class="text-muted mb-0">Aucune catégorie trouvée.</p>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <!-- Pagination -->
+                        {% if totalPages > 1 %}
+                            <nav>
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item {{ currentPage == 1 ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('app_admin_category_index', {page: currentPage - 1, search: currentSearch, sort: currentSort, dir: currentDir}) }}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    {% for i in 1..totalPages %}
+                                        <li class="page-item {{ currentPage == i ? 'active' : '' }}">
+                                            <a class="page-link" href="{{ path('app_admin_category_index', {page: i, search: currentSearch, sort: currentSort, dir: currentDir}) }}">
+                                                {{ i }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="page-item {{ currentPage == totalPages ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ path('app_admin_category_index', {page: currentPage + 1, search: currentSearch, sort: currentSort, dir: currentDir}) }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select all checkbox functionality
+            const selectAll = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.category-checkbox');
+
+            selectAll.addEventListener('change', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+
+            // Confirm bulk actions
+            const bulkForm = document.getElementById('bulk-form');
+            const bulkSubmit = document.getElementById('bulk-submit');
+
+            bulkForm.addEventListener('submit', function(e) {
+                const action = bulkForm.querySelector('select[name="bulk_action"]').value;
+                const checkedBoxes = document.querySelectorAll('.category-checkbox:checked');
+
+                if (checkedBoxes.length === 0) {
+                    e.preventDefault();
+                    alert('Veuillez sélectionner au moins une catégorie.');
+                    return;
+                }
+
+                if (action === 'delete') {
+                    if (!confirm('Êtes-vous sûr de vouloir supprimer les catégories sélectionnées ? Cette action est irréversible.')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
