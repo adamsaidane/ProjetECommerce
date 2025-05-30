@@ -1,0 +1,254 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande {{ order.orderNumber }}{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-2">
+                <!-- Sidebar -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs"></i> Administration</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{{ path('app_admin_dashboard') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                        </a>
+                        <a href="{{ path('app_admin_product_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-book"></i> Produits
+                        </a>
+                        <a href="{{ path('app_admin_user_index') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users"></i> Utilisateurs
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tags"></i> Catégories
+                        </a>
+                        <a href="{{ path('app_admin_order_index') }}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-shopping-cart"></i> Commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-10">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Commande {{ order.orderNumber }}</h1>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-print"></i> Actions
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-print"></i> Imprimer</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-file-pdf"></i> Générer PDF</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-envelope"></i> Envoyer par email</a></li>
+                        </ul>
+                        <a href="{{ path('app_admin_order_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Order Info -->
+                    <div class="col-md-8">
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Informations de la commande</h5>
+                                <span class="badge bg-{{ order.statusBadgeClass }} fs-6">{{ order.statusLabel }}</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td><strong>N° Commande:</strong></td>
+                                                <td><code>{{ order.orderNumber }}</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Date:</strong></td>
+                                                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Statut:</strong></td>
+                                                <td>
+                                                    <form method="POST" action="{{ path('app_admin_order_update_status', {'id': order.id}) }}" class="d-inline">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('update_status' ~ order.id) }}">
+                                                        <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                                            <option value="pending" {{ order.status == 'pending' ? 'selected' : '' }}>En attente</option>
+                                                            <option value="confirmed" {{ order.status == 'confirmed' ? 'selected' : '' }}>Confirmée</option>
+                                                            <option value="shipped" {{ order.status == 'shipped' ? 'selected' : '' }}>Expédiée</option>
+                                                            <option value="delivered" {{ order.status == 'delivered' ? 'selected' : '' }}>Livrée</option>
+                                                            <option value="cancelled" {{ order.status == 'cancelled' ? 'selected' : '' }}>Annulée</option>
+                                                        </select>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td><strong>Articles:</strong></td>
+                                                <td>{{ order.orderItems|length }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Sous-total:</strong></td>
+                                                <td>{{ order.subTotal|number_format(2, ',', ' ') }}€</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Frais de port:</strong></td>
+                                                <td>{{ order.shippingCost ? order.shippingCost|number_format(2, ',', ' ') ~ '€' : 'Gratuit' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total:</strong></td>
+                                                <td><strong>{{ order.totalAmount|number_format(2, ',', ' ') }}€</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Articles commandés</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light">
+                                        <tr>
+                                            <th>Produit</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Quantité</th>
+                                            <th>Sous-total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for item in order.orderItems %}
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        {% if item.product.image %}
+                                                            <img src="{{ asset('uploads/images/' ~ item.product.image) }}"
+                                                                 alt="{{ item.product.title }}"
+                                                                 class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                        {% else %}
+                                                            <div class="bg-light me-3 d-flex align-items-center justify-content-center"
+                                                                 style="width: 50px; height: 50px;">
+                                                                <i class="fas fa-book text-muted"></i>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div>
+                                                            <strong>{{ item.product.title }}</strong><br>
+                                                            <small class="text-muted">{{ item.product.author }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{ item.price|number_format(2, ',', ' ') }}€</td>
+                                                <td>{{ item.quantity }}</td>
+                                                <td><strong>{{ item.subTotal|number_format(2, ',', ' ') }}€</strong></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer & Shipping Info -->
+                    <div class="col-md-4">
+                        <!-- Customer Info -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Informations client</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <div class="avatar-lg bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center">
+                                        <span style="font-size: 1.5rem;">{{ order.user.firstName|first|upper }}{{ order.user.lastName|first|upper }}</span>
+                                    </div>
+                                </div>
+
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <td><strong>Nom:</strong></td>
+                                        <td>{{ order.user.fullName }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Email:</strong></td>
+                                        <td>{{ order.user.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Commandes:</strong></td>
+                                        <td>{{ order.user.orders|length }}</td>
+                                    </tr>
+                                </table>
+
+                                <div class="text-center">
+                                    <a href="{{ path('app_admin_user_show', {'id': order.user.id}) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-user"></i> Voir le profil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Address -->
+                        {% if order.shippingAddress %}
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Adresse de livraison</h5>
+                                </div>
+                                <div class="card-body">
+                                    <address>{{ order.shippingAddress|nl2br }}</address>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Billing Address -->
+                        {% if order.billingAddress %}
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Adresse de facturation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <address>{{ order.billingAddress|nl2br }}</address>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Actions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if order.status == 'cancelled' %}
+                                    <form method="POST" action="{{ path('app_admin_order_delete', {'id': order.id}) }}"
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ order.id) }}">
+                                        <button type="submit" class="btn btn-danger w-100">
+                                            <i class="fas fa-trash"></i> Supprimer la commande
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <p class="text-muted small">Les commandes ne peuvent être supprimées que si elles sont annulées.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar-lg {
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+{% endblock %}
