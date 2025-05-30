@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commandes - Livres Rares{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4">Mes commandes</h1>
+
+        {% if orders|length > 0 %}
+            {% for order in orders %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h5 class="mb-0">Commande #{{ order.orderNumber }}</h5>
+                                <small class="text-muted">{{ order.createdAt|date('d/m/Y à H:i') }}</small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <span class="badge bg-{{ order.statusBadgeClass }} fs-6">
+                                    {{ order.statusLabel }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6>Articles ({{ order.orderItems|length }})</h6>
+                                {% for item in order.orderItems|slice(0, 3) %}
+                                    <div class="d-flex align-items-center mb-2">
+                                        {% if item.product.image %}
+                                            <img src="{{ asset('uploads/images/' ~ item.product.image) }}"
+                                                 alt="{{ item.product.title }}"
+                                                 class="me-3 rounded"
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="me-3 bg-light rounded d-flex align-items-center justify-content-center"
+                                                 style="width: 50px; height: 50px;">
+                                                <i class="fas fa-book text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <strong>{{ item.product.title }}</strong><br>
+                                            <small class="text-muted">{{ item.product.author }} - Qté: {{ item.quantity }}</small>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if order.orderItems|length > 3 %}
+                                    <small class="text-muted">... et {{ order.orderItems|length - 3 }} autre(s) article(s)</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <h5 class="text-primary">{{ order.totalAmount }}€</h5>
+                                <div class="btn-group-vertical d-grid gap-2">
+                                    <a href="{{ path('app_order_show', {id: order.id}) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye"></i> Voir détails
+                                    </a>
+                                    {% if order.status == 'pending' %}
+                                        <form method="post" action="{{ path('app_order_cancel', {id: order.id}) }}" style="display: inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('cancel_order_' ~ order.id) }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm w-100"
+                                                    onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+                                                <i class="fas fa-times"></i> Annuler
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    {% if order.status in ['delivered', 'cancelled'] %}
+                                        <form method="post" action="{{ path('app_order_reorder', {id: order.id}) }}" style="display: inline;">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('reorder_' ~ order.id) }}">
+                                            <button type="submit" class="btn btn-outline-success btn-sm w-100">
+                                                <i class="fas fa-redo"></i> Recommander
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-bag fa-5x text-muted mb-4"></i>
+                <h3>Aucune commande</h3>
+                <p class="text-muted mb-4">Vous n'avez pas encore passé de commande.</p>
+                <a href="{{ path('app_home') }}" class="btn btn-primary">
+                    <i class="fas fa-book"></i> Découvrir nos livres
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

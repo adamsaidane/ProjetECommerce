@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Finaliser ma commande - Livres Rares{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path('app_cart_index') }}">Panier</a></li>
+                        <li class="breadcrumb-item active">Commande</li>
+                    </ol>
+                </nav>
+
+                <h1 class="mb-4">Finaliser ma commande</h1>
+            </div>
+        </div>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Adresse de livraison -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-shipping-fast"></i> Adresse de livraison</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.shipping_first_name) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.shipping_last_name) }}
+                            </div>
+                        </div>
+                        {{ form_row(form.shipping_address) }}
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form_row(form.shipping_postal_code) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_row(form.shipping_city) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_row(form.shipping_country) }}
+                            </div>
+                        </div>
+                        {{ form_row(form.shipping_phone) }}
+                    </div>
+                </div>
+
+                <!-- Adresse de facturation -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-file-invoice"></i> Adresse de facturation</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            {{ form_widget(form.same_billing_address) }}
+                            {{ form_label(form.same_billing_address) }}
+                        </div>
+
+                        <div id="billing-address-fields" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form_row(form.billing_first_name) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.billing_last_name) }}
+                                </div>
+                            </div>
+                            {{ form_row(form.billing_address) }}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {{ form_row(form.billing_postal_code) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.billing_city) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.billing_country) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Méthode de paiement -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card"></i> Méthode de paiement</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.payment_method) }}
+
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Paiement sécurisé</strong><br>
+                            Vos informations de paiement sont protégées par un cryptage SSL.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes de commande -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-sticky-note"></i> Notes de commande</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form_row(form.order_notes) }}
+                    </div>
+                </div>
+
+                <!-- Conditions générales -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="form-check">
+                            {{ form_widget(form.accept_terms) }}
+                            {{ form_label(form.accept_terms) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Récapitulatif de commande -->
+                <div class="card sticky-top" style="top: 20px;">
+                    <div class="card-header">
+                        <h5>Récapitulatif de commande</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in cart.cartItems %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">{{ item.product.title }}</h6>
+                                    <small class="text-muted">{{ item.product.author }}</small>
+                                    <br>
+                                    <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong>{{ item.subTotal }}€</strong>
+                                </div>
+                            </div>
+                            {% if not loop.last %}<hr class="my-2">{% endif %}
+                        {% endfor %}
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Sous-total:</span>
+                            <span>{{ cart.totalPrice }}€</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Livraison:</span>
+                            <span>
+                                {% if cart.totalPrice >= 50 %}
+                                    <span class="text-success">Gratuit</span>
+                                {% else %}
+                                    5,90€
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong class="text-primary">
+                                {% if cart.totalPrice >= 50 %}
+                                    {{ cart.totalPrice }}€
+                                {% else %}
+                                    {{ cart.totalPrice + 5.90 }}€
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-lock"></i> Finaliser la commande
+                            </button>
+                            <a href="{{ path('app_cart_index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour au panier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sameBillingCheckbox = document.getElementById('checkout_same_billing_address');
+            const billingFields = document.getElementById('billing-address-fields');
+
+            function toggleBillingFields() {
+                if (sameBillingCheckbox.checked) {
+                    billingFields.style.display = 'none';
+                } else {
+                    billingFields.style.display = 'block';
+                }
+            }
+
+            sameBillingCheckbox.addEventListener('change', toggleBillingFields);
+            toggleBillingFields(); // Initial state
+        });
+    </script>
+{% endblock %}
