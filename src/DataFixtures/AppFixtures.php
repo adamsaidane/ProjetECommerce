@@ -6,6 +6,8 @@ use App\Entity\Category;
 use App\Entity\Product;
 use App\Entity\Review;
 use App\Entity\User;
+use App\Entity\Order;
+use App\Entity\OrderItem;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -524,6 +526,238 @@ class AppFixtures extends Fixture
                 $review->setCreatedAt($createdAt);
 
                 $manager->persist($review);
+            }
+        }
+
+        // Create orders
+        $ordersData = [
+            // Commande 1 - Adam Saidane
+            [
+                'user' => 0, // Adam Saidane
+                'status' => 'delivered',
+                'items' => [
+                    ['product' => 0, 'quantity' => 1], // Les Misérables
+                    ['product' => 4, 'quantity' => 1], // Le Père Goriot
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Adam',
+                    'lastName' => 'Saidane',
+                    'address' => '123 Rue de la Paix',
+                    'city' => 'Paris',
+                    'postalCode' => '75001',
+                    'country' => 'France',
+                    'phone' => '0123456789'
+                ],
+                'daysAgo' => 45
+            ],
+            // Commande 2 - Marie Dubois
+            [
+                'user' => 3, // Marie Dubois
+                'status' => 'delivered',
+                'items' => [
+                    ['product' => 5, 'quantity' => 1], // L'Art de la Renaissance
+                    ['product' => 6, 'quantity' => 1], // Les Impressionnistes
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Marie',
+                    'lastName' => 'Dubois',
+                    'address' => '456 Avenue des Champs',
+                    'city' => 'Lyon',
+                    'postalCode' => '69001',
+                    'country' => 'France',
+                    'phone' => '0234567890'
+                ],
+                'daysAgo' => 30
+            ],
+            // Commande 3 - Pierre Martin
+            [
+                'user' => 4, // Pierre Martin
+                'status' => 'shipped',
+                'items' => [
+                    ['product' => 9, 'quantity' => 1], // Principia Mathematica
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Pierre',
+                    'lastName' => 'Martin',
+                    'address' => '789 Boulevard Saint-Germain',
+                    'city' => 'Marseille',
+                    'postalCode' => '13001',
+                    'country' => 'France',
+                    'phone' => '0345678901'
+                ],
+                'daysAgo' => 5
+            ],
+            // Commande 4 - Sophie Bernard
+            [
+                'user' => 5, // Sophie Bernard
+                'status' => 'delivered',
+                'items' => [
+                    ['product' => 2, 'quantity' => 1], // Madame Bovary
+                    ['product' => 13, 'quantity' => 1], // Les Fleurs du Mal
+                    ['product' => 14, 'quantity' => 1], // Alcools
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Sophie',
+                    'lastName' => 'Bernard',
+                    'address' => '321 Rue Victor Hugo',
+                    'city' => 'Toulouse',
+                    'postalCode' => '31000',
+                    'country' => 'France',
+                    'phone' => '0456789012'
+                ],
+                'daysAgo' => 60
+            ],
+            // Commande 5 - Julien Moreau
+            [
+                'user' => 6, // Julien Moreau
+                'status' => 'pending',
+                'items' => [
+                    ['product' => 8, 'quantity' => 1], // Mémoires de Guerre
+                    ['product' => 10, 'quantity' => 1], // L'Origine des espèces
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Julien',
+                    'lastName' => 'Moreau',
+                    'address' => '654 Place de la République',
+                    'city' => 'Bordeaux',
+                    'postalCode' => '33000',
+                    'country' => 'France',
+                    'phone' => '0567890123'
+                ],
+                'daysAgo' => 2
+            ],
+            // Commande 6 - Claire Petit
+            [
+                'user' => 7, // Claire Petit
+                'status' => 'delivered',
+                'items' => [
+                    ['product' => 15, 'quantity' => 1], // Dom Juan
+                    ['product' => 16, 'quantity' => 1], // Mémoires d'outre-tombe
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Claire',
+                    'lastName' => 'Petit',
+                    'address' => '987 Rue de Rivoli',
+                    'city' => 'Nice',
+                    'postalCode' => '06000',
+                    'country' => 'France',
+                    'phone' => '0678901234'
+                ],
+                'daysAgo' => 90
+            ],
+            // Commande 7 - Aziz Maamouri
+            [
+                'user' => 1, // Aziz Maamouri
+                'status' => 'delivered',
+                'items' => [
+                    ['product' => 1, 'quantity' => 1], // Le Rouge et le Noir
+                    ['product' => 3, 'quantity' => 1], // Notre-Dame de Paris
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Aziz',
+                    'lastName' => 'Maamouri',
+                    'address' => '147 Avenue Montaigne',
+                    'city' => 'Strasbourg',
+                    'postalCode' => '67000',
+                    'country' => 'France',
+                    'phone' => '0789012345'
+                ],
+                'daysAgo' => 75
+            ],
+            // Commande 8 - Abderrahmen Bouhali
+            [
+                'user' => 2, // Abderrahmen Bouhali
+                'status' => 'cancelled',
+                'items' => [
+                    ['product' => 7, 'quantity' => 1], // Histoire de France
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Abderrahmen',
+                    'lastName' => 'Bouhali',
+                    'address' => '258 Rue de la Liberté',
+                    'city' => 'Lille',
+                    'postalCode' => '59000',
+                    'country' => 'France',
+                    'phone' => '0890123456'
+                ],
+                'daysAgo' => 15
+            ],
+            // Commande 9 - Adam Saidane (deuxième commande)
+            [
+                'user' => 0, // Adam Saidane
+                'status' => 'pending',
+                'items' => [
+                    ['product' => 11, 'quantity' => 1], // Critique de la raison pure
+                    ['product' => 12, 'quantity' => 1], // Être et Temps
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Adam',
+                    'lastName' => 'Saidane',
+                    'address' => '123 Rue de la Paix',
+                    'city' => 'Paris',
+                    'postalCode' => '75001',
+                    'country' => 'France',
+                    'phone' => '0123456789'
+                ],
+                'daysAgo' => 1
+            ],
+            // Commande 10 - Marie Dubois (deuxième commande)
+            [
+                'user' => 3, // Marie Dubois
+                'status' => 'shipped',
+                'items' => [
+                    ['product' => 4, 'quantity' => 2], // Le Père Goriot (2 exemplaires)
+                ],
+                'shippingAddress' => [
+                    'firstName' => 'Marie',
+                    'lastName' => 'Dubois',
+                    'address' => '456 Avenue des Champs',
+                    'city' => 'Lyon',
+                    'postalCode' => '69001',
+                    'country' => 'France',
+                    'phone' => '0234567890'
+                ],
+                'daysAgo' => 7
+            ],
+        ];
+
+        foreach ($ordersData as $orderData) {
+            $order = new Order();
+            $order->setUser($clientUsers[$orderData['user']]);
+            $order->setStatus($orderData['status']);
+
+            // Calculer les dates
+            $createdAt = new \DateTimeImmutable('-' . $orderData['daysAgo'] . ' days');
+            $order->setCreatedAt($createdAt);
+
+            // Définir les dates selon le statut
+
+
+            // Adresse de livraison
+            $order->setShippingAddress($orderData['shippingAddress']['address']);
+
+
+            // Calculer le total
+            $totalPrice = 0;
+            foreach ($orderData['items'] as $itemData) {
+                $product = $productEntities[$itemData['product']];
+                $totalPrice += $product->getPrice() * $itemData['quantity'];
+            }
+            $order->setTotalAmount($totalPrice);
+
+            $manager->persist($order);
+
+            // Créer les items de commande
+            foreach ($orderData['items'] as $itemData) {
+                $product = $productEntities[$itemData['product']];
+
+                $orderItem = new OrderItem();
+                $orderItem->setOrder($order);
+                $orderItem->setProduct($product);
+                $orderItem->setQuantity($itemData['quantity']);
+                $orderItem->setPrice($product->getPrice());
+
+                $manager->persist($orderItem);
             }
         }
 
