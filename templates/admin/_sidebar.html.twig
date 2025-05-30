@@ -9,20 +9,17 @@
         <a href="{{ path('app_admin_product_index') }}" class="list-group-item list-group-item-action {{ active == 'products' ? 'active' : '' }}">
             <i class="fas fa-book"></i> Produits
         </a>
-        <a href="#" class="list-group-item list-group-item-action {{ active == 'categories' ? 'active' : '' }}">
+        <a href="{{ path('app_admin_category_index') }}" class="list-group-item list-group-item-action">
             <i class="fas fa-tags"></i> Catégories
         </a>
-        <a href="#" class="list-group-item list-group-item-action {{ active == 'orders' ? 'active' : '' }}">
+        <a href="{{ path('app_admin_order_index') }}" class="list-group-item list-group-item-action">
             <i class="fas fa-shopping-cart"></i> Commandes
         </a>
-        <a href="#" class="list-group-item list-group-item-action {{ active == 'users' ? 'active' : '' }}">
+        <a href="{{ path('app_admin_user_index') }}" class="list-group-item list-group-item-action">
             <i class="fas fa-users"></i> Utilisateurs
         </a>
         <a href="#" class="list-group-item list-group-item-action {{ active == 'reviews' ? 'active' : '' }}">
             <i class="fas fa-star"></i> Avis clients
-        </a>
-        <a href="#" class="list-group-item list-group-item-action {{ active == 'settings' ? 'active' : '' }}">
-            <i class="fas fa-cog"></i> Paramètres
         </a>
     </div>
 </div>
